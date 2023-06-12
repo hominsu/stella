@@ -163,22 +163,22 @@ inline Value::Value(Type type) : type_(type), data_() {
 
 inline ::std::size_t Value::GetSize() const {
   switch (type_) {
-    case S_TABLE: return ::std::get<S_TABLE_TYPE>(data_)->size();
+    case S_TABLE: return ::std::get<S_TABLE>(data_)->size();
     default: return 1;
   }
 }
 
 inline Value::S_BOOL_TYPE Value::GetBool() const {
   STELLA_ASSERT(type_ == S_BOOL);
-  return ::std::get<S_BOOL_TYPE>(data_);
+  return ::std::get<S_BOOL>(data_);
 }
 
 inline Value::S_INTEGER_TYPE Value::GetInteger() const {
   STELLA_ASSERT(type_ == S_BOOL || type_ == S_INTEGER || type_ == S_NUMBER);
   switch (type_) {
-    case S_BOOL:return ::std::get<S_BOOL_TYPE>(data_);
-    case S_INTEGER:return ::std::get<S_INTEGER_TYPE>(data_);
-    case S_NUMBER:return static_cast<S_INTEGER_TYPE>(::std::get<S_NUMBER_TYPE>(data_));
+    case S_BOOL:return ::std::get<S_BOOL>(data_);
+    case S_INTEGER:return ::std::get<S_INTEGER>(data_);
+    case S_NUMBER:return static_cast<S_INTEGER_TYPE>(::std::get<S_NUMBER>(data_));
     default: STELLA_ASSERT(false);
   }
   return {};
@@ -187,9 +187,9 @@ inline Value::S_INTEGER_TYPE Value::GetInteger() const {
 inline Value::S_NUMBER_TYPE Value::GetNumber() const {
   STELLA_ASSERT(type_ == S_BOOL || type_ == S_INTEGER || type_ == S_NUMBER);
   switch (type_) {
-    case S_BOOL:return ::std::get<S_BOOL_TYPE>(data_);
-    case S_INTEGER:return static_cast<S_NUMBER_TYPE>(::std::get<S_INTEGER_TYPE>(data_));
-    case S_NUMBER:return ::std::get<S_NUMBER_TYPE>(data_);
+    case S_BOOL:return ::std::get<S_BOOL>(data_);
+    case S_INTEGER:return static_cast<S_NUMBER_TYPE>(::std::get<S_INTEGER>(data_));
+    case S_NUMBER:return ::std::get<S_NUMBER>(data_);
     default: STELLA_ASSERT(false);
   }
   return {};
@@ -197,15 +197,15 @@ inline Value::S_NUMBER_TYPE Value::GetNumber() const {
 
 inline ::std::string_view Value::GetStringView() const {
   STELLA_ASSERT(type_ == S_STRING);
-  return *::std::get<S_STRING_TYPE>(data_);
+  return *::std::get<S_STRING>(data_);
 }
 
 inline ::std::string Value::GetString() const {
   STELLA_ASSERT(type_ == S_BOOL || type_ == S_INTEGER || type_ == S_NUMBER || type_ == S_STRING);
   switch (type_) {
-    case S_BOOL:return ::std::get<S_BOOL_TYPE>(data_) ? "true" : "false";
-    case S_INTEGER:return ::std::to_string(::std::get<S_INTEGER_TYPE>(data_));
-    case S_NUMBER:return ::std::to_string(::std::get<S_NUMBER_TYPE>(data_));
+    case S_BOOL:return ::std::get<S_BOOL>(data_) ? "true" : "false";
+    case S_INTEGER:return ::std::to_string(::std::get<S_INTEGER>(data_));
+    case S_NUMBER:return ::std::to_string(::std::get<S_NUMBER>(data_));
     case S_STRING:return ::std::string(GetStringView());
     default: STELLA_ASSERT(false);
   }
@@ -214,7 +214,7 @@ inline ::std::string Value::GetString() const {
 
 inline const auto &Value::GetTable() const {
   STELLA_ASSERT(type_ == S_TABLE);
-  return ::std::get<S_TABLE_TYPE>(data_);
+  return ::std::get<S_TABLE>(data_);
 }
 
 inline Value &Value::SetBool(S_BOOL_TYPE b) {
@@ -244,18 +244,18 @@ inline Value &Value::SetTable() {
 
 inline Value::MemberIterator Value::MemberBegin() {
   STELLA_ASSERT(type_ == S_TABLE);
-  return ::std::get<S_TABLE_TYPE>(data_)->begin();
+  return ::std::get<S_TABLE>(data_)->begin();
 }
 
 inline Value::MemberIterator Value::MemberEnd() {
   STELLA_ASSERT(type_ == S_TABLE);
-  return ::std::get<S_TABLE_TYPE>(data_)->end();
+  return ::std::get<S_TABLE>(data_)->end();
 }
 
 inline Value::MemberIterator Value::FindMember(::std::size_t key) {
   STELLA_ASSERT(type_ == S_TABLE);
-  return ::std::find_if(::std::get<S_TABLE_TYPE>(data_)->begin(),
-                        ::std::get<S_TABLE_TYPE>(data_)->end(),
+  return ::std::find_if(::std::get<S_TABLE>(data_)->begin(),
+                        ::std::get<S_TABLE>(data_)->end(),
                         [key](const Member &member) -> bool {
                           return member.key_.IsInteger()
                               && member.key_.GetInteger() == static_cast<S_INTEGER_TYPE>(key);
@@ -264,8 +264,8 @@ inline Value::MemberIterator Value::FindMember(::std::size_t key) {
 
 inline Value::MemberIterator Value::FindMember(::std::string_view key) {
   STELLA_ASSERT(type_ == S_TABLE);
-  return ::std::find_if(::std::get<S_TABLE_TYPE>(data_)->begin(),
-                        ::std::get<S_TABLE_TYPE>(data_)->end(),
+  return ::std::find_if(::std::get<S_TABLE>(data_)->begin(),
+                        ::std::get<S_TABLE>(data_)->end(),
                         [key](const Member &member) -> bool {
                           return member.key_.IsString() && member.key_.GetStringView() == key;
                         });
@@ -309,7 +309,7 @@ inline Value &Value::operator=(Value &&val) noexcept {
 inline Value &Value::operator[](::std::size_t key) {
   STELLA_ASSERT(type_ == S_TABLE);
   auto it = FindMember(key);
-  if (it != ::std::get<S_TABLE_TYPE>(data_)->end()) {
+  if (it != ::std::get<S_TABLE>(data_)->end()) {
     return it->value_;
   }
   STELLA_ASSERT(false && "value not found");
@@ -325,7 +325,7 @@ inline const Value &Value::operator[](::std::size_t key) const {
 inline Value &Value::operator[](::std::string_view key) {
   STELLA_ASSERT(type_ == S_TABLE);
   auto it = FindMember(key);
-  if (it != ::std::get<S_TABLE_TYPE>(data_)->end()) {
+  if (it != ::std::get<S_TABLE>(data_)->end()) {
     return it->value_;
   }
   STELLA_ASSERT(false && "value not found");
@@ -354,7 +354,7 @@ inline Value &Value::AddMember(Value &&key, Value &&value) {
   STELLA_ASSERT(
       (key.type_ == S_INTEGER ? FindMember(key.GetInteger()) : FindMember(key.GetStringView())) == MemberEnd()
   );
-  auto ptr = ::std::get<S_TABLE_TYPE>(data_);
+  auto ptr = ::std::get<S_TABLE>(data_);
   ptr->emplace_back(::std::move(key), ::std::move(value));
   return ptr->back().value_;
 }

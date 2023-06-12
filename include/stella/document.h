@@ -60,7 +60,7 @@ class Document : public Value {
 };
 
 inline Value *Document::Level::last_value() const {
-  return &::std::get<S_TABLE_TYPE>(value_->data_)->back().value_;
+  return &::std::get<S_TABLE>(value_->data_)->back().value_;
 }
 
 inline error::ParseError Document::Parse(State &state, ::std::string_view name) {
@@ -132,17 +132,17 @@ inline Value *Document::AddValue(Value &&value) {
 
     switch (type) {
       case S_NIL:break;
-      case S_BOOL:data_ = ::std::get<S_BOOL_TYPE>(value.data_);
+      case S_BOOL:data_ = ::std::get<S_BOOL>(value.data_);
         break;
-      case S_INTEGER: data_ = ::std::get<S_INTEGER_TYPE>(value.data_);
+      case S_INTEGER: data_ = ::std::get<S_INTEGER>(value.data_);
         break;
-      case S_NUMBER: data_ = ::std::get<S_NUMBER_TYPE>(value.data_);
+      case S_NUMBER: data_ = ::std::get<S_NUMBER>(value.data_);
         break;
-      case S_STRING: data_ = ::std::get<S_STRING_TYPE>(value.data_);
-        ::std::get<S_STRING_TYPE>(value.data_) = nullptr;
+      case S_STRING: data_ = ::std::get<S_STRING>(value.data_);
+        ::std::get<S_STRING>(value.data_) = nullptr;
         break;
-      case S_TABLE: data_ = ::std::get<S_TABLE_TYPE>(value.data_);
-        ::std::get<S_TABLE_TYPE>(value.data_) = nullptr;
+      case S_TABLE: data_ = ::std::get<S_TABLE>(value.data_);
+        ::std::get<S_TABLE>(value.data_) = nullptr;
         break;
       default:break;
     }
