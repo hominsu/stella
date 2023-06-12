@@ -153,7 +153,7 @@ inline Value::Value(Type type) : type_(type), data_() {
     case S_BOOL:
     case S_INTEGER:
     case S_NUMBER: break;
-    case S_STRING: data_ = ::std::make_shared<String>();
+    case S_STRING:data_.emplace<S_STRING>(::std::make_shared<String>());
       break;
     case S_TABLE: data_ = ::std::make_shared<Table>();
       break;

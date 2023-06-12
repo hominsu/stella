@@ -132,16 +132,16 @@ inline Value *Document::AddValue(Value &&value) {
 
     switch (type) {
       case S_NIL:break;
-      case S_BOOL:data_ = ::std::get<S_BOOL>(value.data_);
+      case S_BOOL:data_.emplace<S_BOOL>(::std::get<S_BOOL>(value.data_));
         break;
-      case S_INTEGER: data_ = ::std::get<S_INTEGER>(value.data_);
+      case S_INTEGER: data_.emplace<S_INTEGER>(::std::get<S_INTEGER>(value.data_));
         break;
-      case S_NUMBER: data_ = ::std::get<S_NUMBER>(value.data_);
+      case S_NUMBER: data_.emplace<S_NUMBER>(::std::get<S_NUMBER>(value.data_));
         break;
-      case S_STRING: data_ = ::std::get<S_STRING>(value.data_);
+      case S_STRING: data_.emplace<S_STRING>(::std::get<S_STRING>(value.data_));
         ::std::get<S_STRING>(value.data_) = nullptr;
         break;
-      case S_TABLE: data_ = ::std::get<S_TABLE>(value.data_);
+      case S_TABLE: data_.emplace<S_TABLE>(::std::get<S_TABLE>(value.data_));
         ::std::get<S_TABLE>(value.data_) = nullptr;
         break;
       default:break;
