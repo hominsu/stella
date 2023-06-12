@@ -27,7 +27,7 @@ namespace stella {
   _field(BOOL, bool)_suffix    \
   _field(INTEGER, LUA_INTEGER)_suffix  \
   _field(NUMBER, LUA_NUMBER)_suffix    \
-  _field(STRING, ::std::shared_ptr<::std::vector<char>>)_suffix \
+  _field(STRING, ::std::shared_ptr<::std::string>)_suffix \
   _field(TABLE, ::std::shared_ptr<::std::vector<Member>>) \
   //
 
@@ -68,7 +68,7 @@ class Value {
  private:
   friend class Document;
 
-  using String = ::std::vector<char>;
+  using String = ::std::string;
   using Table = ::std::vector<Member>;
 
   Type type_;
@@ -79,8 +79,10 @@ class Value {
   explicit Value(S_BOOL_TYPE b) : type_(S_BOOL), data_(b) {};
   explicit Value(S_INTEGER_TYPE i) : type_(S_INTEGER), data_(i) {};
   explicit Value(S_NUMBER_TYPE n) : type_(S_NUMBER), data_(n) {};
-  explicit Value(const char *s) : type_(S_STRING), data_(::std::make_shared<String>(s, s + strlen(s))) {};
-  explicit Value(::std::string_view s) : type_(S_STRING), data_(::std::make_shared<String>(s.begin(), s.end())) {};
+  explicit Value(const char *s)
+      : type_(S_STRING), data_(::std::in_place_index<S_STRING>, ::std::make_shared<String>(s, s + strlen(s))) {};
+  explicit Value(::std::string_view s)
+      : type_(S_STRING), data_(::std::in_place_index<S_STRING>, ::std::make_shared<String>(s.begin(), s.end())) {};
   Value(const Value &value) = default;
   Value(Value &&value) noexcept: type_(value.type_), data_(::std::move(value.data_)) {};
   ~Value() = default;
@@ -195,8 +197,7 @@ inline Value::S_NUMBER_TYPE Value::GetNumber() const {
 
 inline ::std::string_view Value::GetStringView() const {
   STELLA_ASSERT(type_ == S_STRING);
-  auto s_ptr = ::std::get<S_STRING_TYPE>(data_).get();
-  return {s_ptr->data(), s_ptr->size()};
+  return *::std::get<S_STRING_TYPE>(data_);
 }
 
 inline ::std::string Value::GetString() const {

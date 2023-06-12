@@ -46,7 +46,6 @@ template<typename Handler>
 inline error::ParseError Reader::Parse(State &state, Handler &handler) {
   try {
     ParseValue(state, handler);
-//    if (state.HasNext(-1)) { throw Exception(error::ROOT_NOT_SINGULAR); }
     return error::OK;
   } catch (Exception &e) {
     return e.err();
@@ -109,8 +108,6 @@ inline void Reader::ParseTable(State &state, Handler &handler) {
 
 template<typename Handler>
 inline void Reader::ParseValue(State &state, Handler &handler) {
-//  if (!state.HasNext(-1)) { throw Exception(error::EXPECT_VALUE); }
-
   switch (state.GetType(-1)) {
     case S_NIL: return ParseNil(state, handler);
     case S_BOOL: return ParseBool(state, handler);
